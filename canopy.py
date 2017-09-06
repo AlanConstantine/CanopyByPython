@@ -11,7 +11,7 @@ from datetime import datetime
 from pprint import pprint as p
 import matplotlib.pyplot as plt
 
-# 随机生成100个二维平面点
+# 随机生成500个二维[0,1)平面点
 dataset = np.random.rand(500, 2)
 
 
@@ -41,7 +41,7 @@ class Canopy:
         if self.t1 == 0:
             print('Please set the threshold.')
         else:
-            canopy = []  # 用于存放最终归类结果
+            canopies = []  # 用于存放最终归类结果
             while len(self.dataset) != 0:
                 rand_index = self.getRandIndex()
                 current_center = self.dataset[rand_index]  # 随机获取一个中心点，定为P点
@@ -60,34 +60,32 @@ class Canopy:
                         delete_list.append(datum_j)  # 若小于t2则归入删除容器
                 # 根据删除容器的下标，将元素从数据集中删除
                 self.dataset = np.delete(self.dataset, delete_list, 0)
-                canopy.append(
-                    {'canopy_center': current_center, 'canopy_component': current_center_list})
-        return canopy
+                canopies.append((current_center, current_center_list))
+        return canopies
 
 
-def showCanopy(canopy, dataset, t1, t2):
+def showCanopy(canopies, dataset, t1, t2):
     fig = plt.figure()
     sc = fig.add_subplot(111)
-    colors = ['brown', 'peru', 'blue', 'y', 'r', 'sienna', 'dodgerblue', 'deeppink', 'orangered', 'peru', 'blue', 'y', 'r',
+    colors = ['brown', 'green', 'blue', 'y', 'r', 'gold', 'dodgerblue', 'deeppink', 'orangered', 'peru', 'blue', 'y', 'r',
               'gold', 'dimgray', 'darkorange', 'peru', 'blue', 'y', 'r', 'cyan', 'tan', 'orchid', 'peru', 'blue', 'y', 'r', 'sienna']
-    markers = ['*', 'h', 'H', '+', '1', '2', '3', ',', 'v', 'H', '+', '1', '2', '^',
+    markers = ['*', 'h', 'H', '+', 'o', '1', '2', '3', ',', 'v', 'H', '+', '1', '2', '^',
                '<', '>', '.', '4', 'H', '+', '1', '2', 's', 'p', 'x', 'D', 'd', '|', '_']
-    centers = [center['canopy_center'] for center in canopy]
-    for i in range(len(dataset)):
-        datum = dataset[i]
-        strcenters = [str(ele) for ele in centers]
-        if str(datum) in strcenters:
-            index = strcenters.index(str(datum))
-            t1_circle = plt.Circle(
-                xy=(datum[0], datum[1]), radius=t1, color='dodgerblue', fill=False)
-            t2_circle = plt.Circle(
-                xy=(datum[0], datum[1]), radius=t2, color='skyblue', alpha=0.6)
-            sc.add_artist(t1_circle)
-            sc.add_artist(t2_circle)
-            sc.plot(datum[0], datum[1],
-                    marker=markers[index], color=colors[index], markersize=10)
-        else:
-            sc.plot(datum[0], datum[1], 'o', color='black', markersize=1.5)
+    for i in range(len(canopies)):
+        canopy = canopies[i]
+        center = canopy[0]
+        components = canopy[1]
+        sc.plot(center[0], center[1], marker=markers[i],
+                color=colors[i], markersize=10)
+        t1_circle = plt.Circle(
+            xy=(center[0], center[1]), radius=t1, color='dodgerblue', fill=False)
+        t2_circle = plt.Circle(
+            xy=(center[0], center[1]), radius=t2, color='skyblue', alpha=0.2)
+        sc.add_artist(t1_circle)
+        sc.add_artist(t2_circle)
+        for component in components:
+            sc.plot(component[0], component[1],
+                    marker=markers[i], color=colors[i], markersize=1.5)
     maxvalue = np.amax(dataset)
     minvalue = np.amin(dataset)
     plt.xlim(minvalue - t1, maxvalue + t1)
@@ -100,9 +98,9 @@ def main():
     t2 = 0.4
     gc = Canopy(dataset)
     gc.setThreshold(t1, t2)
-    canopy = gc.clustering()
-    print('Get %s initial centers.' % len(canopy))
-    showCanopy(canopy, dataset, t1, t2)
+    canopies = gc.clustering()
+    print('Get %s initial centers.' % len(canopies))
+    showCanopy(canopies, dataset, t1, t2)
 
 
 if __name__ == '__main__':
