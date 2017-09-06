@@ -67,7 +67,7 @@ class Canopy:
 def showCanopy(canopies, dataset, t1, t2):
     fig = plt.figure()
     sc = fig.add_subplot(111)
-    colors = ['brown', 'green', 'blue', 'y', 'r', 'gold', 'dodgerblue', 'deeppink', 'orangered', 'peru', 'blue', 'y', 'r',
+    colors = ['brown', 'green', 'blue', 'y', 'r', 'tan', 'dodgerblue', 'deeppink', 'orangered', 'peru', 'blue', 'y', 'r',
               'gold', 'dimgray', 'darkorange', 'peru', 'blue', 'y', 'r', 'cyan', 'tan', 'orchid', 'peru', 'blue', 'y', 'r', 'sienna']
     markers = ['*', 'h', 'H', '+', 'o', '1', '2', '3', ',', 'v', 'H', '+', '1', '2', '^',
                '<', '>', '.', '4', 'H', '+', '1', '2', 's', 'p', 'x', 'D', 'd', '|', '_']
