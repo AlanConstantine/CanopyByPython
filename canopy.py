@@ -42,13 +42,15 @@ class Canopy:
             print('Please set the threshold.')
         else:
             canopies = []  # 用于存放最终归类结果
-            while len(self.dataset) != 0:
+            # while len(self.dataset) != 0:
+            # 20180324修改
+            while len(self.dataset) > 1:
                 rand_index = self.getRandIndex()
                 current_center = self.dataset[rand_index]  # 随机获取一个中心点，定为P点
                 current_center_list = []  # 初始化P点的canopy类容器
                 delete_list = []  # 初始化P点的删除容器
-                self.dataset = np.delete(
-                    self.dataset, rand_index, 0)  # 删除随机选择的中心点P
+                self.dataset = np.delete(self.dataset, rand_index,
+                                         0)  # 删除随机选择的中心点P
                 for datum_j in range(len(self.dataset)):
                     datum = self.dataset[datum_j]
                     distance = self.euclideanDistance(
@@ -67,25 +69,43 @@ class Canopy:
 def showCanopy(canopies, dataset, t1, t2):
     fig = plt.figure()
     sc = fig.add_subplot(111)
-    colors = ['brown', 'green', 'blue', 'y', 'r', 'tan', 'dodgerblue', 'deeppink', 'orangered', 'peru', 'blue', 'y', 'r',
-              'gold', 'dimgray', 'darkorange', 'peru', 'blue', 'y', 'r', 'cyan', 'tan', 'orchid', 'peru', 'blue', 'y', 'r', 'sienna']
-    markers = ['*', 'h', 'H', '+', 'o', '1', '2', '3', ',', 'v', 'H', '+', '1', '2', '^',
-               '<', '>', '.', '4', 'H', '+', '1', '2', 's', 'p', 'x', 'D', 'd', '|', '_']
+    colors = [
+        'brown', 'green', 'blue', 'y', 'r', 'tan', 'dodgerblue', 'deeppink',
+        'orangered', 'peru', 'blue', 'y', 'r', 'gold', 'dimgray', 'darkorange',
+        'peru', 'blue', 'y', 'r', 'cyan', 'tan', 'orchid', 'peru', 'blue', 'y',
+        'r', 'sienna'
+    ]
+    markers = [
+        '*', 'h', 'H', '+', 'o', '1', '2', '3', ',', 'v', 'H', '+', '1', '2',
+        '^', '<', '>', '.', '4', 'H', '+', '1', '2', 's', 'p', 'x', 'D', 'd',
+        '|', '_'
+    ]
     for i in range(len(canopies)):
         canopy = canopies[i]
         center = canopy[0]
         components = canopy[1]
-        sc.plot(center[0], center[1], marker=markers[i],
-                color=colors[i], markersize=10)
+        sc.plot(
+            center[0],
+            center[1],
+            marker=markers[i],
+            color=colors[i],
+            markersize=10)
         t1_circle = plt.Circle(
-            xy=(center[0], center[1]), radius=t1, color='dodgerblue', fill=False)
+            xy=(center[0], center[1]),
+            radius=t1,
+            color='dodgerblue',
+            fill=False)
         t2_circle = plt.Circle(
             xy=(center[0], center[1]), radius=t2, color='skyblue', alpha=0.2)
         sc.add_artist(t1_circle)
         sc.add_artist(t2_circle)
         for component in components:
-            sc.plot(component[0], component[1],
-                    marker=markers[i], color=colors[i], markersize=1.5)
+            sc.plot(
+                component[0],
+                component[1],
+                marker=markers[i],
+                color=colors[i],
+                markersize=1.5)
     maxvalue = np.amax(dataset)
     minvalue = np.amin(dataset)
     plt.xlim(minvalue - t1, maxvalue + t1)
